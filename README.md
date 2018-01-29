@@ -1,5 +1,6 @@
-# Files	
-Base files : 
+# Files	description
+
+Old files : 
 
 RCF.m <=> initial data analysis, excel import and automatic treatment, did not work - 2016
 
@@ -12,3 +13,7 @@ RCF3.m <=> Reactivity calculation every second on the specified spreadsheet, fil
 RCF3bis.m <=> same than RCF3 with matlab derivative functions tests, not used - 2017 
 
 RCF3tres.m <=> same than RCF3 with matlab derivative functions tests, not used - 2017 
+
+New files :
+
+userinput.m <=> User inputs experiment info on Matlab
