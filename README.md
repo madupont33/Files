@@ -16,4 +16,4 @@ RCF3tres.m <=> same than RCF3 with matlab derivative functions tests, not used -
 
 New files :
 
-userinput.m <=> User inputs experiment info on Matlab
+userinput.m <=> User inputs experiment info on Matlab - 2018
