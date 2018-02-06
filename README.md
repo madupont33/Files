@@ -16,8 +16,14 @@ RCF3tres.m <=> same than RCF3 with matlab derivative functions tests, not used -
 
 New files :
 
-userinput.m <=> User inputs experiment info on Matlab - 2018
+All data 2016 <=> RCF 2016 raw data converted in excel format, 1 sheet per experiment day
 
-All data 2016 : RCF raw data converted in excel format, 1 sheet per experiment day - 2016
+All data 2017 <=> RCF 2017 raw data converted in excel format, 1 sheet per experiment day
 
-All data 2017 : RCF raw data converted in excel format, 1 sheet per experiment day - 2017
+Main_analysis.m <=> Main script, describes and perform all functions and all steps of the analysis
+
+userinput.m <=> function where the user inputs experiment timeframe and type on Matlab 
+
+data_import.m <=> function to import and classify by experiment type data to treat from "All data 2016" and "All data 2017" files
+
+
