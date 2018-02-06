@@ -17,3 +17,7 @@ RCF3tres.m <=> same than RCF3 with matlab derivative functions tests, not used -
 New files :
 
 userinput.m <=> User inputs experiment info on Matlab - 2018
+
+All data 2016 : RCF raw data converted in excel format, 1 sheet per experimetn day - 2016
+
+All data 2017 : RCF raw data converted in excel format, 1 sheet per experimetn day - 2017
