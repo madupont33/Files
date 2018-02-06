@@ -18,6 +18,6 @@ New files :
 
 userinput.m <=> User inputs experiment info on Matlab - 2018
 
-All data 2016 : RCF raw data converted in excel format, 1 sheet per experimetn day - 2016
+All data 2016 : RCF raw data converted in excel format, 1 sheet per experiment day - 2016
 
-All data 2017 : RCF raw data converted in excel format, 1 sheet per experimetn day - 2017
+All data 2017 : RCF raw data converted in excel format, 1 sheet per experiment day - 2017
