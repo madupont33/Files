@@ -4,12 +4,13 @@ clc;
 % user inputs nb of files
 nb_files_input='Number of files to analyze:';
 nb_files_value=input(nb_files_input);
+file_names=strings(1,nb_files_value);
 
 % user inputs nb of spreadsheets
 for i=1:nb_files_value
     fprintf(' File %d :\n', i);
     file_name_input='Name of file:';
-    file_name(i)=input(file_name_input);
+    file_names(1,i)=input(file_name_input,'s');
     nb_sheets_input='Number of spreadsheets:';
     nb_sheets_value(i)=input(nb_sheets_input);
 end
@@ -37,10 +38,16 @@ for i=1:nb_files_value
             start_time_hour_value(i,j,k) = input(start_time_hour_input);
             start_time_minute_input='Select start time minute:' ;
             start_time_minute_value(i,j,k) = input(start_time_minute_input);
+            start_time_second_input='Select start time second:' ;
+            start_time_second_value(i,j,k) = input(start_time_second_input);
             end_time_hour_input='Select end time hour:' ;
             end_time_hour_value(i,j,k) = input(end_time_hour_input);
             end_time_minute_input='Select end time minute:' ;
             end_time_minute_value(i,j,k) = input(end_time_minute_input);
+            end_time_second_input='Select end time second:' ;
+            end_time_second_value(i,j,k) = input(end_time_second_input);
+            start_time(i,j,k)=strcat(string(start_time_hour_value(i,j,k)),{':'},string(start_time_minute_value(i,j,k)),{':'},string(start_time_second_value(i,j,k)));
+            end_time(i,j,k)=strcat(string(end_time_hour_value(i,j,k)),{':'},string(end_time_minute_value(i,j,k)),{':'},string(end_time_second_value(i,j,k)));
         end
     end
 end
