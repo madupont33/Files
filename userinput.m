@@ -34,20 +34,10 @@ for i=1:nb_files_value
             fprintf(' Experiment %d :\n', k);
             experiment_type_input='Select experiment type : \n Reactor excess reactivity(1)\n Moderator_temperature_feedback(2)\n Test_section_temperature_profile(3)\n Dynamic_flowrate (4)' ;
             experiment_types_value(i,j,k) = input(experiment_type_input);
-            start_time_hour_input='Select start time hour:' ;
+            start_time_hour_input='Select start time cell:' ;
             start_time_hour_value(i,j,k) = input(start_time_hour_input);
-            start_time_minute_input='Select start time minute:' ;
-            start_time_minute_value(i,j,k) = input(start_time_minute_input);
-            start_time_second_input='Select start time second:' ;
-            start_time_second_value(i,j,k) = input(start_time_second_input);
-            end_time_hour_input='Select end time hour:' ;
+            end_time_hour_input='Select end time cell:' ;
             end_time_hour_value(i,j,k) = input(end_time_hour_input);
-            end_time_minute_input='Select end time minute:' ;
-            end_time_minute_value(i,j,k) = input(end_time_minute_input);
-            end_time_second_input='Select end time second:' ;
-            end_time_second_value(i,j,k) = input(end_time_second_input);
-            start_time(i,j,k)=strcat(string(start_time_hour_value(i,j,k)),{':'},string(start_time_minute_value(i,j,k)),{':'},string(start_time_second_value(i,j,k)));
-            end_time(i,j,k)=strcat(string(end_time_hour_value(i,j,k)),{':'},string(end_time_minute_value(i,j,k)),{':'},string(end_time_second_value(i,j,k)));
         end
     end
 end
