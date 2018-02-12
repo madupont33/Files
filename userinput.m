@@ -8,6 +8,8 @@ nb_files_value=input(nb_files_input);
 % user inputs nb of spreadsheets
 for i=1:nb_files_value
     fprintf(' File %d :\n', i);
+    file_name_input='Name of file:';
+    file_name(i)=input(file_name_input);
     nb_sheets_input='Number of spreadsheets:';
     nb_sheets_value(i)=input(nb_sheets_input);
 end
