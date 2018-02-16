@@ -57,23 +57,23 @@ end
 %AlphaT experiments experiments
 n=1
 while n<nb_alphaT
-    Reactor_excess_reactivity(n)
+    alphaT(n)
 end    
 
 %Moderator_temperature_feedback experiments
 n=1
 while n<nb_MTF
-    Reactor_excess_reactivity(n)
+    Moderator_temperature_feedback(n)
 end    
 
 %Test_section_temperature_profile experiments
 n=1
 while n<nb_TST
-    Reactor_excess_reactivity(n)
+    Test_section_temperature_profile(n)
 end    
 
 %Dynamic_flowrate experiments
 n=1
 while n<nb_DF
-    Reactor_excess_reactivity(n)
+    Dynamic_flowrate(n)
 end    
