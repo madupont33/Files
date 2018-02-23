@@ -20,6 +20,8 @@ All data 2016 <=> RCF 2016 raw data converted in excel format, 1 sheet per exper
 
 All data 2017 <=> RCF 2017 raw data converted in excel format, 1 sheet per experiment day
 
+data test file <=> Selection of raw data for each type of experiment, 1 sheet per experiment
+
 Main_analysis.m <=> Main script, describes and perform all functions and all steps of the analysis
 
 userinput.m <=> function where the user inputs experiment timeframe and type on Matlab 
