@@ -1,0 +1,222 @@
+%User_input and data import
+
+clear;
+clc;
+
+% user inputs nb of files
+nb_files_input='Number of files to analyze:';
+nb_files_value=input(nb_files_input);
+file_name=strings(1,nb_files_value);
+
+% user inputs nb of spreadsheets
+for i=1:nb_files_value
+    fprintf(' File %d :\n', i);
+    file_name_input='Name of file:';
+    file_name(i)=input(file_name_input,'s');
+    nb_sheets_input='Number of spreadsheets:';
+    nb_sheets_value(i)=input(nb_sheets_input);
+end
+
+% user input nb of measurements file by file and spreadsheet by spreadsheet
+for i=1:nb_files_value
+    for j=1:nb_sheets_value(i)
+        fprintf(' File %d :\n', i);
+        fprintf(' Spreadsheet %d :\n', j); 
+        nb_exp_input='Number of experiments:' ;
+        nb_exp_value(i,j)=input(nb_exp_input);
+    end
+end
+
+% user inputs start/end row number and type of experiments
+nb_RER=0;
+nb_alphaT=0;
+nb_MTF=0;
+nb_TST=0;
+nb_DF=0;
+nb_exp_tot=0;
+for i=1:nb_files_value
+    for j=1:nb_sheets_value(i)
+        for k=1:nb_exp_value(i,j)
+            fprintf(' File %d :\n', i);
+            fprintf(' Spreadsheet %d :\n', j);
+            fprintf(' Experiment %d :\n', k);
+            experiment_type_input='Select experiment type : \n Reactor excess reactivity(1)\n Moderator_temperature_feedback(2)\n Test_section_temperature_profile(3)\n Dynamic_flowrate (4)' ;
+            experiment_type_value(i,j,k) = input(experiment_type_input);
+            experiment_date_input='Experiment date MMDDYY format:\n';
+            experiment_date_value(i,j,k) = input(experiment_date_input);
+            experiment_core_input='Experiment number of fuel pins in the core:\n';
+            experiment_core_value(i,j,k) = input(experiment_core_input);
+            nb_exp_tot=nb_exp_tot+1;
+            if experiment_type_value(i,j,k)==1
+                nb_RER=nb_RER+1;
+                elseif experiment_type_value(i,j,k)==2
+                nb_MTF=nb_MTF+1;    
+                    elseif experiment_type_value(i,j,k)==3
+                    nb_TST=nb_TST+1;    
+                        else
+                        nb_DF=nb_DF+1;                               
+            end
+            start_time_input='Select start time row number:' ;
+            start_time_value(i,j,k) = input(start_time_input);
+            end_time_input='Select end time row number:' ;
+            end_time_value(i,j,k) = input(end_time_input);
+        end
+    end
+end
+
+%Time, power (3 channels) and temperatures/pressure import
+
+%Variables size declaration
+Time{i,j,k}=zeros(i,j,k);
+LP1{i,j,k}=zeros(i,j,k);
+LP2{i,j,k}=zeros(i,j,k);
+PP2{i,j,k}=zeros(i,j,k);
+T_M1{i,j,k}=zeros(i,j,k);
+T_M2{i,j,k}=zeros(i,j,k);
+T_M3{i,j,k}=zeros(i,j,k);
+T_TS1{i,j,k}=zeros(i,j,k);
+T_TS2{i,j,k}=zeros(i,j,k);
+T_TS3{i,j,k}=zeros(i,j,k);
+T_TS4{i,j,k}=zeros(i,j,k);
+P{i,j,k}=zeros(i,j,k);
+
+%Excel data import
+for i=1:nb_files_value
+    for j=1:nb_sheets_value(i)
+        for k=1:nb_exp_value(i,j)
+            filename = file_name(i);
+            sheet=j;
+            %Time
+            start_time=num2str(start_time_value(i,j,k));
+            end_time=num2str(end_time_value(i,j,k));
+            Time_range=sprintf('A%s:A%s',start_time,end_time);
+            Time{i,j,k} = xlsread(filename,sheet,Time_range);
+            %Power channel 1:LP1
+            LP1_range=sprintf('D%s:D%s',start_time,end_time);
+            LP1{i,j,k} = xlsread(filename,sheet,LP1_range);
+            %Power channel 2:LP2
+            LP2_range=sprintf('E%s:E%s',start_time,end_time);
+            LP2{i,j,k} = xlsread(filename,sheet,LP2_range);
+            %Power channel 3:PP2
+            PP2_range=sprintf('H%s:H%s',start_time,end_time);
+            PP2{i,j,k} = xlsread(filename,sheet,PP2_range);
+            %Moderator temperature TC 1
+            T_M1_range=sprintf('J%s:J%s',start_time,end_time);
+            T_M1{i,j,k} = xlsread(filename,sheet,T_M1_range);
+            %Moderator temperature TC 2
+            T_M2_range=sprintf('K%s:K%s',start_time,end_time);
+            T_M2{i,j,k} = xlsread(filename,sheet,T_M2_range);
+            %Moderator temperature TC 3
+            T_M3_range=sprintf('L%s:L%s',start_time,end_time);
+            T_M3{i,j,k} = xlsread(filename,sheet,T_M3_range);
+            %Test section temperature Inlet top 1 : deepest
+            T_TS1_range=sprintf('O%s:O%s',start_time,end_time);
+            T_TS1{i,j,k} = xlsread(filename,sheet,T_TS1_range);
+            %Test section temperature Inlet top 2 : medium depth
+            T_TS2_range=sprintf('R%s:R%s',start_time,end_time);
+            T_TS2{i,j,k} = xlsread(filename,sheet,T_TS2_range);
+            %Test section temperature Inlet top 3 : edge
+            T_TS3_range=sprintf('Q%s:Q%s',start_time,end_time);
+            T_TS3{i,j,k} = xlsread(filename,sheet,T_TS3_range);
+            %Test section temperature Outlet
+            T_TS4_range=sprintf('P%s:P%s',start_time,end_time);
+            T_TS4{i,j,k} = xlsread(filename,sheet,T_TS4_range);
+            %Pressure
+            P_range=sprintf('S%s:S%s',start_time,end_time);
+            P{i,j,k} = xlsread(filename,sheet,P_range);
+            %Output when 1 exp is imported
+            fprintf(' Experiment %d of Spreadsheet %d import finished.\n', k,j);
+        end
+   end
+end
+
+%Output when all exp are imported
+fprintf('Experiments import finished.\n');
+
+%Re organization of database from X(i,j,k) == variable(file,sheet,exp_nb)
+%to X_Y(i) == exp type_variable(exp_nb from type)
+
+%Variables initialization
+l=1;
+m=1;
+n=1;
+o=1;
+
+%Data re organization
+for i=1:nb_files_value
+    for j=1:nb_sheets_value(i)
+        for k=1:nb_exp_value(i,j)
+            if experiment_type_value(i,j,k)==1
+                RER_Time(l)=Time(i,j,k);
+                RER_LP1(l)=LP1(i,j,k);
+                RER_LP2(l)=LP2(i,j,k);
+                RER_PP2(l)=PP2(i,j,k);
+                RER_T_M1(l)=T_M1(i,j,k);
+                RER_T_M2(l)=T_M2(i,j,k);
+                RER_T_M3(l)=T_M3(i,j,k);
+                RER_T_S1(l)=T_TS1(i,j,k);
+                RER_T_S2(l)=T_TS2(i,j,k);
+                RER_T_S3(l)=T_TS3(i,j,k);
+                RER_T_S4(l)=T_TS4(i,j,k);
+                RER_P(l)=P(i,j,k);
+                RER_date(l)=experiment_date_value(i,j,k);
+                RER_core(l)=experiment_core_value(i,j,k);
+                l=l+1;
+            elseif experiment_type_value(i,j,k)==2
+                MTF_Time(m)=Time(i,j,k);
+                MTF_LP1(m)=LP1(i,j,k);
+                MTF_LP2(m)=LP2(i,j,k);
+                MTF_PP2(m)=PP2(i,j,k);
+                MTF_T_M1(m)=T_M1(i,j,k);
+                MTF_T_M2(m)=T_M2(i,j,k);
+                MTF_T_M3(m)=T_M3(i,j,k);
+                MTF_T_S1(m)=T_TS1(i,j,k);
+                MTF_T_S2(m)=T_TS2(i,j,k);
+                MTF_T_S3(m)=T_TS3(i,j,k);
+                MTF_T_S4(m)=T_TS4(i,j,k);
+                MTF_P(m)=P(i,j,k);
+                m=m+1; 
+            elseif experiment_type_value(i,j,k)==3
+                TST_Time(n)=Time(i,j,k);
+                TST_LP1(n)=LP1(i,j,k);
+                TST_LP2(n)=LP2(i,j,k);
+                TST_PP2(n)=PP2(i,j,k);
+                TST_T_M1(n)=T_M1(i,j,k);
+                TST_T_M2(n)=T_M2(i,j,k);
+                TST_T_M3(n)=T_M3(i,j,k);
+                TST_T_S1(n)=T_TS1(i,j,k);
+                TST_T_S2(n)=T_TS2(i,j,k);
+                TST_T_S3(n)=T_TS3(i,j,k);
+                TST_T_S4(n)=T_TS4(i,j,k);
+                TST_P(n)=P(i,j,k);
+                n=n+1;  
+            else
+                DF_Time(o)=Time(i,j,k);
+                DF_LP1(o)=LP1(i,j,k);
+                DF_LP2(o)=LP2(i,j,k);
+                DF_PP2(o)=PP2(i,j,k);
+                DF_T_M1(o)=T_M1(i,j,k);
+                DF_T_M2(o)=T_M2(i,j,k);
+                DF_T_M3(o)=T_M3(i,j,k);
+                DF_T_S1(o)=T_TS1(i,j,k);
+                DF_T_S2(o)=T_TS2(i,j,k);
+                DF_T_S3(o)=T_TS3(i,j,k);
+                DF_T_S4(o)=T_TS4(i,j,k);
+                DF_P(o)=P(i,j,k);
+                o=o+1;                       
+            end
+        end
+   end
+end
+%}
+
+%Variable save separated by experiment type
+if nb_RER>0
+    save('RER-2016.mat','RER_Time','RER_LP1','RER_LP2','RER_PP2','RER_T_M1','RER_T_M2','RER_T_M3','RER_T_S1','RER_T_S2','RER_T_S3','RER_T_S4','RER_P','nb_RER','experiment_date_value','experiment_core_value')
+elseif nb_MTF>0
+    save('MTF-2016.mat','MTF_Time','MTF_LP1','MTF_LP2','MTF_PP2','MTF_T_M1','MTF_T_M2','MTF_T_M3','MTF_T_S1','MTF_T_S2','MTF_T_S3','MTF_T_S4','MTF_P''nb_MTF')
+elseif nb_TST>0
+    save('TST-2016.mat','TST_Time','TST_LP1','TST_LP2','TST_PP2','TST_T_M1','TST_T_M2','TST_T_M3','TST_T_S1','TST_T_S2','TST_T_S3','TST_T_S4','TST_P','nb_TST')
+elseif nb_DF>0
+    save('DF-2016.mat','DF_Time','DF_LP1','DF_LP2','DF_PP2','DF_T_M1','DF_T_M2','DF_T_M3','DF_T_S1','DF_T_S2','DF_T_S3','DF_T_S4','DF_P','nb_DF')
+end
