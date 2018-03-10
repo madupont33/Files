@@ -22,10 +22,9 @@ All data 2017 <=> RCF 2017 raw data converted in excel format, 1 sheet per exper
 
 data test file <=> Selection of raw data for each type of experiment, 1 sheet per experiment
 
-Main_analysis.m <=> Main script, describes and perform all functions and all steps of the analysis
+Data_input_import.m <=> function where the user inputs experiment timeframe,type and info, and data is imported and classified by experiment type to .mat files on Matlab
 
-userinput.m <=> function where the user inputs experiment timeframe and type on Matlab 
-
-data_import.m <=> function to import and classify by experiment type data to treat from "All data 2016" and "All data 2017" files
+Reactor_excess_reactivity.m <=> load RER****.mat file to perform analysis to get reactor period and excess reactivity
+ 
 
 
