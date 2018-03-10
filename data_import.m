@@ -1,352 +1,121 @@
-%function[] = RCF()
+clear;
 clc;
 
-%Power
-filename = 'inputP';
-
-xlrange1='A:A';
-xlrange2='H:H';
-
-time = xlsread(filename,xlrange1);
-power = xlsread(filename,xlrange2);
-
-time = time(~isnan(time));
-time2 = datestr(time, 'HH:MM:SS');
-time3=cellstr(time2);
-
-power = power(~isnan(power));
-
-n=numel(time);
-
-for i=1:n
-    time(i)=i-1;
-end
-
-%Temp
-filename = 'inputT';
-
-xlrange1='D:D';
-xlrange2='F:F';
-xlrange3='H:H';
-
-
-temp1 = xlsread(filename,xlrange1);
-temp2 = xlsread(filename,xlrange2);
-temp3 = xlsread(filename,xlrange3);
-
-m=numel(temp1);
-
-tempAv=zeros(1,m);
-tempAv2=zeros(1,n);
-
-for i=1:m
-    tempAv(i)=(temp1(i)+temp2(i)+temp3(i))/3;
-end
-
-
-k=1;
-j=1;
-while j<n
-        p=1;
-        while p<301
-            tempAv2(j)=tempAv(k);
-            p=p+1;
-            j=j+1;
+%Time, power (3 channels) and temperatures/pressure import
+for i=1:nb_files_value
+    for j=1:nb_sheets_value(i)
+        for k=1:nb_exp_value(i,j)
+            filename = file_name(i);
+            sheet=j;
+            %Time
+            start_time=num2str(start_time_value(i,j,k));
+            end_time=num2str(end_time_value(i,j,k));
+            Time_range=sprintf('A%s:A%s',start_time,end_time);
+            Time{i,j,k} = xlsread(filename,sheet,Time_range);
+            %Power channel 1:LP1
+            LP1_range=sprintf('D%s:D%s',start_time,end_time);
+            LP1{i,j,k} = xlsread(filename,sheet,LP1_range);
+            %Power channel 2:LP2
+            LP2_range=sprintf('E%s:E%s',start_time,end_time);
+            LP2{i,j,k} = xlsread(filename,sheet,LP2_range);
+            %Power channel 3:PP2
+            PP2_range=sprintf('H%s:H%s',start_time,end_time);
+            PP2{i,j,k} = xlsread(filename,sheet,PP2_range);
+            %Moderator temperature TC 1
+            T_M1_range=sprintf('J%s:J%s',start_time,end_time);
+            T_M1{i,j,k} = xlsread(filename,sheet,T_M1_range);
+            %Moderator temperature TC 2
+            T_M2_range=sprintf('K%s:K%s',start_time,end_time);
+            T_M2{i,j,k} = xlsread(filename,sheet,T_M2_range);
+            %Moderator temperature TC 3
+            T_M3_range=sprintf('L%s:L%s',start_time,end_time);
+            T_M3{i,j,k} = xlsread(filename,sheet,T_M3_range);
+            %Test section temperature Inlet top 1 : deepest
+            T_TS1_range=sprintf('O%s:O%s',start_time,end_time);
+            T_TS1{i,j,k} = xlsread(filename,sheet,T_TS1_range);
+            %Test section temperature Inlet top 2 : medium depth
+            T_TS2_range=sprintf('R%s:R%s',start_time,end_time);
+            T_TS2{i,j,k} = xlsread(filename,sheet,T_TS2_range);
+            %Test section temperature Inlet top 3 : edge
+            T_TS3_range=sprintf('Q%s:Q%s',start_time,end_time);
+            T_TS3{i,j,k} = xlsread(filename,sheet,T_TS3_range);
+            %Test section temperature Outlet
+            T_TS4_range=sprintf('P%s:P%s',start_time,end_time);
+            T_TS4{i,j,k} = xlsread(filename,sheet,T_TS4_range);
+            %Pressure
+            P_range=sprintf('S%s:S%s',start_time,end_time);
+            P{i,j,k} = xlsread(filename,sheet,P_range);
         end
-k=k+1;
+   end
 end
 
-tempAv3=transpose(tempAv2);
-
-%New file
-filename = 'output';
-
-xlrange1='A';
-xlrange2='B';
-xlrange3='C';
-sheet =1;
-
-xlswrite(filename,time3,sheet,xlrange1);
-xlswrite(filename,power,sheet,xlrange2);
-xlswrite(filename,tempAv3,sheet,xlrange3);
-
-%separating data
-
+%Re organization of database from X(i,j,k) == variable(file,sheet,exp_nb)
+%to X_Y(i) == exp type_variable(exp_nb from type)
+l=1;
+m=1;
+n=1;
 o=1;
 
-for i=1:n    
-    if power(i)>0.03
-      Ntime(o)=time3(i);
-      Ndtime(o)=time(i);
-      Npower(o)=power(i);
-      Ntemp(o)=tempAv3(i);
-      o=o+1;
-    end
+for i=1:nb_files_value
+    for j=1:nb_sheets_value(i)
+        for k=1:nb_exp_value(i,j)
+            if experiment_type_value(i,j,k)==1
+                RER_Time(l)=Time(i,j,k);
+                RER_LP1(l)=LP1(i,j,k);
+                RER_LP2(l)=LP2(i,j,k);
+                RER_PP2(l)=PP2(i,j,k);
+                RER_T_M1(l)=T_M1(i,j,k);
+                RER_T_M2(l)=T_M2(i,j,k);
+                RER_T_M3(l)=T_M3(i,j,k);
+                RER_T_S1(l)=T_TS1(i,j,k);
+                RER_T_S2(l)=T_TS2(i,j,k);
+                RER_T_S3(l)=T_TS3(i,j,k);
+                RER_T_S4(l)=T_TS4(i,j,k);
+                RER_P(l)=P(i,j,k);
+                l=l+1;
+            elseif experiment_type_value(i,j,k)==2
+                MTF_Time(m)=Time(i,j,k);
+                MTF_LP1(m)=LP1(i,j,k);
+                MTF_LP2(m)=LP2(i,j,k);
+                MTF_PP2(m)=PP2(i,j,k);
+                MTF_T_M1(m)=T_M1(i,j,k);
+                MTF_T_M2(m)=T_M2(i,j,k);
+                MTF_T_M3(m)=T_M3(i,j,k);
+                MTF_T_S1(m)=T_TS1(i,j,k);
+                MTF_T_S2(m)=T_TS2(i,j,k);
+                MTF_T_S3(m)=T_TS3(i,j,k);
+                MTF_T_S4(m)=T_TS4(i,j,k);
+                MTF_P(m)=P(i,j,k);
+                m=m+1;    
+            elseif experiment_type_value(i,j,k)==3
+                TST_Time(n)=Time(i,j,k);
+                TST_LP1(n)=LP1(i,j,k);
+                TST_LP2(n)=LP2(i,j,k);
+                TST_PP2(n)=PP2(i,j,k);
+                TST_T_M1(n)=T_M1(i,j,k);
+                TST_T_M2(n)=T_M2(i,j,k);
+                TST_T_M3(n)=T_M3(i,j,k);
+                TST_T_S1(n)=T_TS1(i,j,k);
+                TST_T_S2(n)=T_TS2(i,j,k);
+                TST_T_S3(n)=T_TS3(i,j,k);
+                TST_T_S4(n)=T_TS4(i,j,k);
+                TST_P(n)=P(i,j,k);
+                n=n+1;   
+            else
+                DF_Time(o)=Time(i,j,k);
+                DF_LP1(o)=LP1(i,j,k);
+                DF_LP2(o)=LP2(i,j,k);
+                DF_PP2(o)=PP2(i,j,k);
+                DF_T_M1(o)=T_M1(i,j,k);
+                DF_T_M2(o)=T_M2(i,j,k);
+                DF_T_M3(o)=T_M3(i,j,k);
+                DF_T_S1(o)=T_TS1(i,j,k);
+                DF_T_S2(o)=T_TS2(i,j,k);
+                DF_T_S3(o)=T_TS3(i,j,k);
+                DF_T_S4(o)=T_TS4(i,j,k);
+                DF_P(o)=P(i,j,k);
+                o=o+1;                       
+            end
+        end
+   end
 end
-
-
-Ntime2=transpose(Ntime);
-Npower2=transpose(Npower);
-Ntemp2=transpose(Ntemp);
-Ndtime2=transpose(Ndtime);
-
-i=1;
-j=1;
-k=1;
-for i=1:o-2   
-    if Ndtime2(i+1)-Ndtime2(i)>60
-       j=j+1;
-       k=1;
-    else
-       Mtime(k,j)=Ntime2(i);
-       Mpower(k,j)=Npower2(i);
-       Mtemp(k,j)=Ntemp2(i);
-       k=k+1;
-    end
-end
-for i=1:j
-    Fpower(:,i)=cellstr(num2str(Mpower(:,i)));
-    Ftemp(:,i)=cellstr(num2str(Mtemp(:,i)));
-end
-
-Exp1(:,1)=Mtime(:,1);
-Exp1(:,2)=Fpower(:,1);
-Exp1(:,3)=Ftemp(:,1);
-
-MaxPow=zeros(size((Exp1(:,2)),1),size((Exp1(:,2)),2));
-MaxPow=str2double(Exp1(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp1(i,:)=Exp1(i,:);
-end
-
-Exp2(:,1)=Mtime(:,2);
-Exp2(:,2)=Fpower(:,2);
-Exp2(:,3)=Ftemp(:,2);
-
-MaxPow=zeros(size((Exp2(:,2)),1),size((Exp1(:,2)),2));
-MaxPow=str2double(Exp2(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp2(i,:)=Exp2(i,:);
-end
-
-Exp3(:,1)=Mtime(:,3);
-Exp3(:,2)=Fpower(:,3);
-Exp3(:,3)=Ftemp(:,3);
-
-MaxPow=zeros(size((Exp3(:,2)),1),size((Exp3(:,2)),2));
-MaxPow=str2double(Exp3(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp3(i,:)=Exp3(i,:);
-end
-
-Exp4(:,1)=Mtime(:,4);
-Exp4(:,2)=Fpower(:,4);
-Exp4(:,3)=Ftemp(:,4);
-
-MaxPow=zeros(size((Exp4(:,2)),1),size((Exp4(:,2)),2));
-MaxPow=str2double(Exp4(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp4(i,:)=Exp4(i,:);
-end
-
-Exp5(:,1)=Mtime(:,5);
-Exp5(:,2)=Fpower(:,5);
-Exp5(:,3)=Ftemp(:,5);
-
-MaxPow=zeros(size((Exp5(:,2)),1),size((Exp5(:,2)),2));
-MaxPow=str2double(Exp5(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp5(i,:)=Exp5(i,:);
-end
-
-Exp6(:,1)=Mtime(:,6);
-Exp6(:,2)=Fpower(:,6);
-Exp6(:,3)=Ftemp(:,6);
-
-MaxPow=zeros(size((Exp6(:,2)),1),size((Exp6(:,2)),2));
-MaxPow=str2double(Exp6(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp6(i,:)=Exp6(i,:);
-end
-
-Exp7(:,1)=Mtime(:,7);
-Exp7(:,2)=Fpower(:,7);
-Exp7(:,3)=Ftemp(:,7);
-
-MaxPow=zeros(size((Exp7(:,2)),1),size((Exp7(:,2)),2));
-MaxPow=str2double(Exp7(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp7(i,:)=Exp7(i,:);
-end
-
-Exp8(:,1)=Mtime(:,8);
-Exp8(:,2)=Fpower(:,8);
-Exp8(:,3)=Ftemp(:,8);
-
-MaxPow=zeros(size((Exp8(:,2)),1),size((Exp8(:,2)),2));
-MaxPow=str2double(Exp8(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp8(i,:)=Exp8(i,:);
-end
-
-Exp9(:,1)=Mtime(:,9);
-Exp9(:,2)=Fpower(:,9);
-Exp9(:,3)=Ftemp(:,9);
-
-MaxPow=zeros(size((Exp9(:,2)),1),size((Exp9(:,2)),2));
-MaxPow=str2double(Exp9(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp9(i,:)=Exp9(i,:);
-end
-
-Exp10(:,1)=Mtime(:,10);
-Exp10(:,2)=Fpower(:,10);
-Exp10(:,3)=Ftemp(:,10);
-
-MaxPow=zeros(size((Exp10(:,2)),1),size((Exp10(:,2)),2));
-MaxPow=str2double(Exp10(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp10(i,:)=Exp10(i,:);
-end
-
-Exp11(:,1)=Mtime(:,11);
-Exp11(:,2)=Fpower(:,11);
-Exp11(:,3)=Ftemp(:,11);
-
-MaxPow=zeros(size((Exp11(:,2)),1),size((Exp11(:,2)),2));
-MaxPow=str2double(Exp11(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp11(i,:)=Exp11(i,:);
-end
-
-Exp12(:,1)=Mtime(:,12);
-Exp12(:,2)=Fpower(:,12);
-Exp12(:,3)=Ftemp(:,12);
-
-MaxPow=zeros(size((Exp12(:,2)),1),size((Exp12(:,2)),2));
-MaxPow=str2double(Exp12(:,2));
-
-[Maxpower1,Maxpower1i] = max(MaxPow);
-
-for i=1:Maxpower1i
-    FExp12(i,:)=Exp12(i,:);
-end
-
-
-sheet =2;
-
-xlrange1='A';
-
-xlswrite(filename,FExp1,sheet,xlrange1);
-
-sheet =3;
-
-xlrange1='A';
-
-xlswrite(filename,FExp2,sheet,xlrange1);
-
-sheet =4;
-
-xlrange1='A';
-
-xlswrite(filename,FExp3,sheet,xlrange1);
-
-sheet =5;
-
-xlrange1='A';
-
-xlswrite(filename,FExp4,sheet,xlrange1);
-
-sheet =6;
-
-xlrange1='A';
-
-xlswrite(filename,FExp5,sheet,xlrange1);
-
-sheet =7;
-
-xlrange1='A';
-
-xlswrite(filename,FExp6,sheet,xlrange1);
-
-sheet =8;
-
-xlrange1='A';
-
-xlswrite(filename,FExp7,sheet,xlrange1);
-
-sheet =9;
-
-xlrange1='A';
-
-xlswrite(filename,FExp8,sheet,xlrange1);
-
-sheet =10;
-
-xlrange1='A';
-
-xlswrite(filename,FExp9,sheet,xlrange1);
-
-sheet =11;
-
-xlrange1='A';
-
-xlswrite(filename,FExp10,sheet,xlrange1);
-
-sheet =12;
-
-xlrange1='A';
-
-xlswrite(filename,FExp11,sheet,xlrange1);
-
-sheet =13;
-
-xlrange1='A';
-
-xlswrite(filename,FExp12,sheet,xlrange1);
-
-%Calculating T and rho
-
-% for i=2:13
-%     %suppress data not exponential
-%     %create exponential
-%     %reset t = 0
-%     %find T
-%     %find rho
-% end
-
-
-    
