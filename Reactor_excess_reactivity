@@ -1,0 +1,18 @@
+%Reactor_excess_reactivity
+clc;
+clear;
+  
+%Data load from mat file
+load('RER-2016.mat')
+
+for i=1:nb_RER
+    %Mean moderator temperature calculation
+    RER_T_M_mean{i}(:,1)=(RER_T_M1{i}(:,1)+RER_T_M2{i}(:,1)+RER_T_M3{i}(:,1))/3;
+    
+    %Time conversion
+    n=0;
+    n=numel(RER_Time{i});
+    for j=1:n
+      RER_Time{i}(j,:)=j-1;
+    end 
+end 
