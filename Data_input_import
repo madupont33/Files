@@ -3,6 +3,8 @@
 clear;
 clc;
 
+
+
 % user inputs nb of files
 nb_files_input='Number of files to analyze:';
 nb_files_value=input(nb_files_input);
@@ -21,7 +23,9 @@ end
 for i=1:nb_files_value
     for j=1:nb_sheets_value(i)
         fprintf(' File %d :\n', i);
-        fprintf(' Spreadsheet %d :\n', j); 
+        fprintf(' Spreadsheet %d :\n', j);
+        experiment_date_input='Experiment date MMDDYY format:\n';
+        experiment_date_value(i,j) = input(experiment_date_input);
         nb_exp_input='Number of experiments:' ;
         nb_exp_value(i,j)=input(nb_exp_input);
     end
@@ -42,8 +46,6 @@ for i=1:nb_files_value
             fprintf(' Experiment %d :\n', k);
             experiment_type_input='Select experiment type : \n Reactor excess reactivity(1)\n Moderator_temperature_feedback(2)\n Test_section_temperature_profile(3)\n Dynamic_flowrate (4)' ;
             experiment_type_value(i,j,k) = input(experiment_type_input);
-            experiment_date_input='Experiment date MMDDYY format:\n';
-            experiment_date_value(i,j,k) = input(experiment_date_input);
             experiment_core_input='Experiment number of fuel pins in the core:\n';
             experiment_core_value(i,j,k) = input(experiment_core_input);
             nb_exp_tot=nb_exp_tot+1;
@@ -65,6 +67,9 @@ for i=1:nb_files_value
 end
 
 %Time, power (3 channels) and temperatures/pressure import
+
+%Execution timer
+tic;
 
 %Variables size declaration
 Time{i,j,k}=zeros(i,j,k);
@@ -143,6 +148,7 @@ n=1;
 o=1;
 
 %Data re organization
+fprintf('Data re organization is started.\n');
 for i=1:nb_files_value
     for j=1:nb_sheets_value(i)
         for k=1:nb_exp_value(i,j)
@@ -159,8 +165,8 @@ for i=1:nb_files_value
                 RER_T_S3(l)=T_TS3(i,j,k);
                 RER_T_S4(l)=T_TS4(i,j,k);
                 RER_P(l)=P(i,j,k);
-                RER_date(l)=experiment_date_value(i,j,k);
-                RER_core(l)=experiment_core_value(i,j,k);
+                RER_date(l)=experiment_date_value(i,j);
+                RER_core(l)=experiment_core_value(i,j);
                 l=l+1;
             elseif experiment_type_value(i,j,k)==2
                 MTF_Time(m)=Time(i,j,k);
@@ -175,6 +181,8 @@ for i=1:nb_files_value
                 MTF_T_S3(m)=T_TS3(i,j,k);
                 MTF_T_S4(m)=T_TS4(i,j,k);
                 MTF_P(m)=P(i,j,k);
+                MTF_date(m)=experiment_date_value(i,j);
+                MTF_core(m)=experiment_core_value(i,j);
                 m=m+1; 
             elseif experiment_type_value(i,j,k)==3
                 TST_Time(n)=Time(i,j,k);
@@ -189,6 +197,8 @@ for i=1:nb_files_value
                 TST_T_S3(n)=T_TS3(i,j,k);
                 TST_T_S4(n)=T_TS4(i,j,k);
                 TST_P(n)=P(i,j,k);
+                TST_date(n)=experiment_date_value(i,j);
+                TST_core(n)=experiment_core_value(i,j);
                 n=n+1;  
             else
                 DF_Time(o)=Time(i,j,k);
@@ -203,6 +213,8 @@ for i=1:nb_files_value
                 DF_T_S3(o)=T_TS3(i,j,k);
                 DF_T_S4(o)=T_TS4(i,j,k);
                 DF_P(o)=P(i,j,k);
+                DF_date(o)=experiment_date_value(i,j);
+                DF_core(o)=experiment_core_value(i,j);
                 o=o+1;                       
             end
         end
@@ -210,13 +222,26 @@ for i=1:nb_files_value
 end
 %}
 
+fprintf('Data re organization is finished.\n');
+
 %Variable save separated by experiment type
 if nb_RER>0
-    save('RER-2016.mat','RER_Time','RER_LP1','RER_LP2','RER_PP2','RER_T_M1','RER_T_M2','RER_T_M3','RER_T_S1','RER_T_S2','RER_T_S3','RER_T_S4','RER_P','nb_RER','experiment_date_value','experiment_core_value')
-elseif nb_MTF>0
-    save('MTF-2016.mat','MTF_Time','MTF_LP1','MTF_LP2','MTF_PP2','MTF_T_M1','MTF_T_M2','MTF_T_M3','MTF_T_S1','MTF_T_S2','MTF_T_S3','MTF_T_S4','MTF_P''nb_MTF')
-elseif nb_TST>0
-    save('TST-2016.mat','TST_Time','TST_LP1','TST_LP2','TST_PP2','TST_T_M1','TST_T_M2','TST_T_M3','TST_T_S1','TST_T_S2','TST_T_S3','TST_T_S4','TST_P','nb_TST')
-elseif nb_DF>0
-    save('DF-2016.mat','DF_Time','DF_LP1','DF_LP2','DF_PP2','DF_T_M1','DF_T_M2','DF_T_M3','DF_T_S1','DF_T_S2','DF_T_S3','DF_T_S4','DF_P','nb_DF')
+    save('RER-2016.mat','RER_Time','RER_LP1','RER_LP2','RER_PP2','RER_T_M1','RER_T_M2','RER_T_M3','RER_T_S1','RER_T_S2','RER_T_S3','RER_T_S4','RER_P','nb_RER','RER_date','RER_core')
 end
+
+if nb_MTF>0
+    save('MTF-2016.mat','MTF_Time','MTF_LP1','MTF_LP2','MTF_PP2','MTF_T_M1','MTF_T_M2','MTF_T_M3','MTF_T_S1','MTF_T_S2','MTF_T_S3','MTF_T_S4','MTF_P','nb_MTF','MTF_date','MTF_core')
+end
+
+if nb_TST>0
+    save('TST-2016.mat','TST_Time','TST_LP1','TST_LP2','TST_PP2','TST_T_M1','TST_T_M2','TST_T_M3','TST_T_S1','TST_T_S2','TST_T_S3','TST_T_S4','TST_P','nb_TST','TST_date','TST_core')
+end
+
+if nb_DF>0
+    save('DF-2016.mat','DF_Time','DF_LP1','DF_LP2','DF_PP2','DF_T_M1','DF_T_M2','DF_T_M3','DF_T_S1','DF_T_S2','DF_T_S3','DF_T_S4','DF_P','nb_DF','DF_date','DF_core')
+end
+
+fprintf('.mat files are saved.\n');
+
+%Execution timer ends
+toc;
