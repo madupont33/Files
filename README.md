@@ -24,6 +24,8 @@ data test file <=> Selection of raw data for each type of experiment, 1 sheet pe
 
 Data_input_import.m <=> function where the user inputs experiment timeframe,type and info, and data is imported and classified by experiment type to .mat files on Matlab
 
+Data_input_noimport.m <=> function similar to Data_input_import.m, with the user input ability removed, and the experiments information are written in the code for an automatic import to .mat files on Matlab
+
 Reactor_excess_reactivity.m <=> load RER****.mat file to perform analysis to get reactor period and excess reactivity
  
 
