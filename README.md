@@ -6,7 +6,7 @@ RCF.m <=> initial data analysis, excel import and automatic treatment, did not w
 
 RCF2.m <=> Reactivity calculation on all the i excel spreadsheets specified, file used until January 2018 - 2017
 
-RCF2test.m <=> same than RCF2 with alphat, abandonned file - 2016
+RCF2test.m <=> same than RCF2 with alphat, abandoned file - 2016
 
 RCF3.m <=> Reactivity calculation every second on the specified spreadsheet, file used until January 2018 - 2017
 
